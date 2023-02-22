@@ -1,7 +1,7 @@
 #include <cmath>
 #include "sa.hpp"
 
-class SellerProblem : public sa::ExpectedOptimizationProblem<sa::real,sa::real> {
+class SellerProblem : public sa::ExpectedValueProblem<sa::real,sa::real> {
     public: 
         using real = sa::real;
         virtual real valueFunction(const real& x, const real& z) {
@@ -25,7 +25,7 @@ class SellerProblem : public sa::ExpectedOptimizationProblem<sa::real,sa::real> 
         std::mt19937 mt{};
 };
 
-class SellerSolver : public sa::EOPSolver<sa::real,sa::real> {
+class SellerSolver : public sa::EVPSolver<sa::real,sa::real> {
     using real = sa::real;
     private:
         std::normal_distribution<real> gaussian {0.,10.};
@@ -35,7 +35,7 @@ class SellerSolver : public sa::EOPSolver<sa::real,sa::real> {
             return x + gaussian(mt); }
 
         // defaults to base constructor, important! 
-        using sa::EOPSolver<real,real>::EOPSolver;
+        using sa::EVPSolver<real,real>::EVPSolver;
 };
 
 int main(){

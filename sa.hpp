@@ -37,17 +37,17 @@ struct solverAnswer{
 namespace sa {
     // F is for deterministic decision, G for random variate.
     template <typename F,typename G> 
-    class ExpectedOptimizationProblem {
+    class ExpectedValueProblem {
         public:
             virtual real valueFunction(const F& x, const G& z) = 0;
             virtual bool domainChecker(const F& x) = 0;
             virtual G    RVSampler() = 0;
             
-            virtual ~ExpectedOptimizationProblem(){};
+            virtual ~ExpectedValueProblem(){};
     };
 
     template <typename F, typename G>
-    class EOPSolver {
+    class EVPSolver {
         private:
             const F x0;
             F m_x;      
@@ -56,7 +56,7 @@ namespace sa {
             std::uniform_real_distribution<real> U{0., 1.};
             std::mt19937 generator{};
         public:
-            ExpectedOptimizationProblem<F,G>& P;
+            ExpectedValueProblem<F,G>& P;
             const integer batchSize = 1;
 
             virtual F    neighborHoodExplorer(const F& x) = 0;
@@ -64,8 +64,8 @@ namespace sa {
                 return -static_cast<real>(n);
             }
         
-            EOPSolver(
-                ExpectedOptimizationProblem<F,G>& P,
+            EVPSolver(
+                ExpectedValueProblem<F,G>& P,
                 const F& x0,
                 integer batchSize,
                 uint_fast32_t seed = 0)  :
@@ -73,12 +73,12 @@ namespace sa {
                 {
                     if (!P.domainChecker(x0)){
                         throw std::domain_error(
-                            "EOPSolver: The starting value of class ExpectedOptimizationProblem is not within it's own defined domain.");
+                            "EVPSolver: The starting value of class ExpectedValueProblem is not within it's own defined domain.");
                     }
                     generator.seed(seed); // initialize seed to mersenne twister
                 }
 
-            virtual ~EOPSolver(){};
+            virtual ~EVPSolver(){};
 
             solverAnswer<F> run(integer iterations){
 

@@ -14,7 +14,7 @@
 using real = sa::real;
 using vecn = sa::vecn;
 
-class VecProblem : public sa::ExpectedOptimizationProblem<vecn,vecn> {
+class VecProblem : public sa::ExpectedValueProblem<vecn,vecn> {
     public: 
         virtual real valueFunction(const vecn& x, const vecn& z) {
             return x[0]*x[0] + x[1]*x[1] + 0.1 * z[0];  // <x,x> + random error
@@ -34,14 +34,14 @@ class VecProblem : public sa::ExpectedOptimizationProblem<vecn,vecn> {
 
 };
 
-class VecSolver : public sa::EOPSolver<vecn,vecn> {
+class VecSolver : public sa::EVPSolver<vecn,vecn> {
     public:
         virtual vecn neighborHoodExplorer(const vecn& x){
             return x + vecn{gaussian(mt),gaussian(mt)}; // searches in direction (N1,N2) with Ni being a standard normal
         }
 
         // Needed
-        using sa::EOPSolver<vecn,vecn>::EOPSolver; // IMPORTANT! defaults to base constructor, otherwise cannot be constructed.
+        using sa::EVPSolver<vecn,vecn>::EVPSolver; // IMPORTANT! defaults to base constructor, otherwise cannot be constructed.
 
     private:
         std::normal_distribution<real> gaussian {0.,1.}; // provides randomness functionality
