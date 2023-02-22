@@ -18,6 +18,7 @@ namespace sa {
     const real infinity = std::numeric_limits<real>::infinity();
 };
 
+namespace sa{
 template <typename X>
 struct solverAnswer{
     bool insideDomain = false;
@@ -34,6 +35,7 @@ struct solverAnswer{
     }
 };
 
+};
 namespace sa {
     // X is for deterministic decision, Z for random variate.
     template <typename X,typename Z> 
@@ -73,7 +75,7 @@ namespace sa {
                 {
                     if (!P.domainChecker(x0)){
                         throw std::domain_error(
-                            "EVPSolver: The starting value of class ExpectedValueProblem is not within it's own defined domain.");
+                            "EVPSolver: The starting value provided to the solver is not within ExpectedValueProblem defined domain (isDomain(x0) returns false).");
                     }
                     generator.seed(seed); // initialize seed to mersenne twister
                 }
