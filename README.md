@@ -1,7 +1,5 @@
 # Simulated Annealing for Expected Value Problems
 
-# English
-
 **Summary:**
 A few classes/interfaces in C++ implementing "Simulated Annealing" optimization method on optimization problems involving an objective function defined as the expected value of a random variable.
 
