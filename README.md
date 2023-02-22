@@ -16,7 +16,7 @@ Here, $X$ is a domain of feasible, deterministic decisions $x$, $z$ is a random 
 TODO.
 
 For now, check the file `Rn_problem_template.cpp` and figure it out.
-Essentially, you need to create a derived class for the problem and the solver, and after that you can run it and retrieve your results.
+Essentially, you need to create a derived class for the problem and the solver, fill out details by providing functions specific to your application, and after that you can run it and retrieve your results.
 
 ## Theory
 
