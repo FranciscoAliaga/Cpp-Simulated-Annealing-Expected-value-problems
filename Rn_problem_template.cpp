@@ -11,15 +11,31 @@
 // problem/solver templates
 #include "sa.hpp"                  
 
+using integer = sa::integer;
 using real = sa::real;
 using vecn = sa::vecn;
+
+/* important read for the problem class:
+
+    here we derive from expectedvalueproblem template and override the virtual functions:
+
+        - valueFunction     is the value function that goes through expected value, and what we want to optimize
+        - insideDomain      returns whether a value x is inside of the domain x
+        - RVSampler         is the source of randomness in the variable z. RVS stands for Random Variate Sampler.
+    
+    notice:
+    - we are deriving from template <vecn,vecn> in order to have x and z as vector spaces.
+    - we also added private variables with a normal_distribution and a mersenne twister (mt19937).
+    these are used to provide the randomness functionality to the problem.
+
+*/
 
 class VecProblem : public sa::ExpectedValueProblem<vecn,vecn> {
     public: 
         virtual real valueFunction(const vecn& x, const vecn& z) {
             return x[0]*x[0] + x[1]*x[1] + 0.1 * z[0];  // <x,x> + random error
         }
-        virtual bool domainChecker(const vecn& x){
+        virtual bool insideDomain(const vecn& x){
             return
             (-50 <= x[0] && x[0] <= 50) &&              // domain is [-50, 50] x [-30, 30]
             (-30 <= x[1] && x[0] <= 30);                //
@@ -34,10 +50,35 @@ class VecProblem : public sa::ExpectedValueProblem<vecn,vecn> {
 
 };
 
+/* Important read for the solver class:
+
+    Here we derive from EVPSolver template and override the virtual functions:
+
+        - neighborHoodExplorer:
+            this function is in charge of providing new candidate solutions by giving
+            solutions nearby the current x.
+            since we are on a vector space, we just provide a small perturbation
+                neighbor(x) = x + (N1,N2)
+        - temperature:
+            this function is in charge of cooling the exploration. This should be
+            negative valued, and also never be zero for inputs greater than or equal to 0.
+        
+    notice:
+    - we are using the EVPSolver constructor.
+        Failure to do so will leave this derived class without constructor and will probably not compile.
+    - we also added private variables with a normal_distribution and a mersenne twister (mt19937).
+    these are used to provide the randomness functionality to the problem.
+
+*/
+
 class VecSolver : public sa::EVPSolver<vecn,vecn> {
     public:
         virtual vecn neighborHoodExplorer(const vecn& x){
             return x + vecn{gaussian(mt),gaussian(mt)}; // searches in direction (N1,N2) with Ni being a standard normal
+        }
+
+        virtual real temperature(integer t){ 
+            return -static_cast<real>(t); // negative, and should never be zero for t greater than or equal to 0.
         }
 
         // Needed

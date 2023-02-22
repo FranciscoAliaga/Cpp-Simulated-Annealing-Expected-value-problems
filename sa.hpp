@@ -42,7 +42,7 @@ namespace sa {
     class ExpectedValueProblem {
         public:
             virtual real valueFunction(const X& x, const Z& z) = 0;
-            virtual bool domainChecker(const X& x) = 0;
+            virtual bool insideDomain(const X& x) = 0;
             virtual Z    RVSampler() = 0;
             
             virtual ~ExpectedValueProblem(){};
@@ -62,7 +62,7 @@ namespace sa {
             const integer batchSize = 1;
 
             virtual X    neighborHoodExplorer(const X& x) = 0;
-            virtual real temperature (const integer n) {
+            virtual real temperature (integer n) {
                 return -static_cast<real>(n);
             }
         
@@ -73,9 +73,9 @@ namespace sa {
                 uint_fast32_t seed = 0)  :
                 x0 {x0}, m_x {x0}, P{P}, batchSize{batchSize}
                 {
-                    if (!P.domainChecker(x0)){
+                    if (!P.insideDomain(x0)){
                         throw std::domain_error(
-                            "EVPSolver: The starting value provided to the solver is not within ExpectedValueProblem defined domain (isDomain(x0) returns false).");
+                            "EVPSolver: The starting value provided to the solver is not within ExpectedValueProblem defined domain (insideDomain(x0) returns false).");
                     }
                     generator.seed(seed); // initialize seed to mersenne twister
                 }
@@ -96,7 +96,7 @@ namespace sa {
                     // generate new candidate
                     X new_x = neighborHoodExplorer(x);
                     // if not on domain, try new iteration
-                    if (!(P.domainChecker(new_x))) continue;
+                    if (!(P.insideDomain(new_x))) continue;
                     real new_val = eval(new_x);
 
                     // compare to previous solutions
@@ -126,7 +126,7 @@ namespace sa {
 
                 // clean up and finalization
                 m_x = best_x;
-                bool is_in_domain = P.domainChecker(m_x);
+                bool is_in_domain = P.insideDomain(m_x);
                 return {is_in_domain, best_value, m_x};
             }
 

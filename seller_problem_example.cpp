@@ -15,7 +15,7 @@ class SellerProblem : public sa::ExpectedValueProblem<sa::real,sa::real> {
             return n_profits; 
         }
 
-        virtual bool domainChecker(const real& x){return x > 0;};
+        virtual bool insideDomain(const real& x){return x > 0;};
         virtual real RVSampler(){return gaussian(mt);};
     
     private:
