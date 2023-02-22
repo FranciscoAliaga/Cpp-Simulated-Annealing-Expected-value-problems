@@ -4,7 +4,7 @@
 Unas pequeñas clases/interfaces en C++ implementando el método de optimización simulated annealing para resolver problemas de optimización donde hay una esperanza en la función valor.
 
 **Summary:**
-A few classes/interfaces in C++ implementing "Simulated Annealing" optimization method on optimization problems involving an objective function that is the expected value of a random variable.
+A few classes/interfaces in C++ implementing "Simulated Annealing" optimization method on optimization problems involving an objective function defined as the expected value of a random variable.
 
 ## Summarized Theory
 
