@@ -51,7 +51,7 @@ class VecSolver : public sa::EVPSolver<vecn,vecn> {
 int main(){
     unsigned int seed = 10;
 
-    vecn x0 {10., 10.}; // starting value
+    vecn x0 {10., 10.}; // starting state
 
     VecProblem P{};     // initialize problem class
 
@@ -62,7 +62,14 @@ int main(){
         seed);          // and defined seed
 
     auto result = S.run(100);        // run the solver for 100 iterations
-    std::cout << result << "and that's all folks!"; // stream out result!
+    std::cout << result;
+
+    // variables provided by the solver:
+    auto inside = result.insideDomain; // bool, checks if the result is within domain. (should always be true)
+    auto value  = result.value;        // real, returns an estimation for the expected value problem.
+    auto state  = result.state;        // X, is the value found by the simulated annealing method.
+
+    std::cout << "within domain: " << inside << " ; value: " << value << " ; x: " << state << std::endl;
 
     return 0;
 }
