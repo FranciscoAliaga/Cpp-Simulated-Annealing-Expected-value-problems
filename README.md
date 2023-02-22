@@ -1,8 +1,5 @@
 # Simulated Annealing for Expected Value Problems
 
-**Resumen:**
-Unas pequeñas clases/interfaces en C++ implementando el método de optimización simulated annealing para resolver problemas de optimización donde hay una esperanza en la función valor.
-
 **Summary:**
 A few classes/interfaces in C++ implementing "Simulated Annealing" optimization method on optimization problems involving an objective function defined as the expected value of a random variable.
 
@@ -19,7 +16,7 @@ Here, $X$ is a domain of feasible, deterministic decisions $x$, $z$ is a random 
 TODO.
 
 For now, check the file `Rn_problem_template.cpp` and figure it out.
-Essentially, you need to create a derived class for the problem and the solver, and after that you can run it and retrieve your results.
+Essentially, you need to create a derived class for the problem and the solver, fill out details by providing functions specific to your application, and after that you can run it and retrieve your results.
 
 ## Theory
 
@@ -33,3 +30,10 @@ EVP stands for Expected value problem.
 
 ## Recommended headers for g++
 ```g++ -O2 -Wall -Weffc++ -Wextra -Wsign-conversion -std=c++17 file.cpp -o file.exe```
+
+# Spanish
+
+TODO.
+
+**Resumen:**
+Unas pequeñas clases/interfaces en C++ implementando el método de optimización simulated annealing para resolver problemas de optimización donde hay una esperanza en la función valor.
