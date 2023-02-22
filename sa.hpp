@@ -18,11 +18,11 @@ namespace sa {
     const real infinity = std::numeric_limits<real>::infinity();
 };
 
-template <typename F>
+template <typename X>
 struct solverAnswer{
     bool insideDomain = false;
     sa::real value    = sa::infinity;
-    F    state;
+    X    state;
 
     friend std::ostream& operator<<(std::ostream& out, const solverAnswer& result)
     {
@@ -35,38 +35,38 @@ struct solverAnswer{
 };
 
 namespace sa {
-    // F is for deterministic decision, G for random variate.
-    template <typename F,typename G> 
+    // X is for deterministic decision, Z for random variate.
+    template <typename X,typename Z> 
     class ExpectedValueProblem {
         public:
-            virtual real valueFunction(const F& x, const G& z) = 0;
-            virtual bool domainChecker(const F& x) = 0;
-            virtual G    RVSampler() = 0;
+            virtual real valueFunction(const X& x, const Z& z) = 0;
+            virtual bool domainChecker(const X& x) = 0;
+            virtual Z    RVSampler() = 0;
             
             virtual ~ExpectedValueProblem(){};
     };
 
-    template <typename F, typename G>
+    template <typename X, typename Z>
     class EVPSolver {
         private:
-            const F x0;
-            F m_x;      
+            const X x0;
+            X m_x;      
             real m_value = infinity;
 
             std::uniform_real_distribution<real> U{0., 1.};
             std::mt19937 generator{};
         public:
-            ExpectedValueProblem<F,G>& P;
+            ExpectedValueProblem<X,Z>& P;
             const integer batchSize = 1;
 
-            virtual F    neighborHoodExplorer(const F& x) = 0;
+            virtual X    neighborHoodExplorer(const X& x) = 0;
             virtual real temperature (const integer n) {
                 return -static_cast<real>(n);
             }
         
             EVPSolver(
-                ExpectedValueProblem<F,G>& P,
-                const F& x0,
+                ExpectedValueProblem<X,Z>& P,
+                const X& x0,
                 integer batchSize,
                 uint_fast32_t seed = 0)  :
                 x0 {x0}, m_x {x0}, P{P}, batchSize{batchSize}
@@ -80,19 +80,19 @@ namespace sa {
 
             virtual ~EVPSolver(){};
 
-            solverAnswer<F> run(integer iterations){
+            solverAnswer<X> run(integer iterations){
 
                 // setup
                 real current_value = eval(m_x);
                 real best_value    = current_value;
 
-                F best_x = m_x;
-                F x      = m_x;
+                X best_x = m_x;
+                X x      = m_x;
 
                 // algorithm
                 for(integer t = 0 ; t < iterations; t++){
                     // generate new candidate
-                    F new_x = neighborHoodExplorer(x);
+                    X new_x = neighborHoodExplorer(x);
                     // if not on domain, try new iteration
                     if (!(P.domainChecker(new_x))) continue;
                     real new_val = eval(new_x);
@@ -128,7 +128,7 @@ namespace sa {
                 return {is_in_domain, best_value, m_x};
             }
 
-            real eval(const F& x){
+            real eval(const X& x){
                 integer n = batchSize;
                 std::vector<real> samples(n);
                 std::generate(std::execution::par_unseq, samples.begin(), samples.end(),
