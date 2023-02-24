@@ -70,14 +70,14 @@ namespace sa {
                 ExpectedValueProblem<X,Z>& P,
                 const X& x0,
                 integer batchSize,
-                uint_fast32_t seed = 0)  :
+                uint_fast32_t acceptance_probability_seed = 0)  :
                 x0 {x0}, m_x {x0}, P{P}, batchSize{batchSize}
                 {
                     if (!P.insideDomain(x0)){
                         throw std::domain_error(
                             "EVPSolver: The starting value provided to the solver is not within ExpectedValueProblem defined domain (insideDomain(x0) returns false).");
                     }
-                    generator.seed(seed); // initialize seed to mersenne twister
+                    generator.seed(acceptance_probability_seed); // initialize seed to mersenne twister
                 }
 
             virtual ~EVPSolver(){};

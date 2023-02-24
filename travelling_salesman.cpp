@@ -55,11 +55,16 @@ class TSPSolver : public sa::EVPSolver<tour,real> {
         }
 
         virtual real temperature(integer t){ 
-            return -static_cast<real>(t); // negative, and should never be zero for t greater than or equal to 0.
+            return -std::sqrt(static_cast<real>(t)); // negative, and should never be zero for t greater than or equal to 0.
         }
 
         // Needed
         using sa::EVPSolver<tour,real>::EVPSolver; // IMPORTANT! defaults to base constructor, otherwise cannot be constructed.
+
+        void set_neighborhood_explorer_seed(unsigned int seed){
+            mt.seed(seed);
+        }
+
 
     private:
         std::uniform_int_distribution<unsigned long> u{0, std::numeric_limits<unsigned long>::max()}; // provides randomness functionality
@@ -67,9 +72,15 @@ class TSPSolver : public sa::EVPSolver<tour,real> {
 };
 
 int main(int argc, char* argv[]){
-    unsigned int seed = 0;
-    if (argc != 1) seed = static_cast<unsigned int>(std::stoi(argv[1]));
-    std::cout << "seed: " << seed << '\n' << std::endl ;
+    unsigned int acceptance_seed = 0;
+    unsigned int exploration_seed = 0;
+    if (argc >= 3){
+        acceptance_seed = static_cast<unsigned int>(std::stoi(argv[1]));
+        exploration_seed = static_cast<unsigned int>(std::stoi(argv[2]));
+        }
+
+    std::cout << "random acceptance seed:  " << acceptance_seed <<  std::endl ;
+    std::cout << "random exploration seed: " << exploration_seed << '\n' << std::endl ;
 
     size_t cities = 8;
     tour starting_tour(cities); for(size_t i = 0; i < cities; i++) starting_tour[i] = i; // traverse in order.
@@ -102,18 +113,33 @@ int main(int argc, char* argv[]){
         } std::cout << "\n";
     } std::cout << "\n" << std::endl;;
 
+    /* Problem Declaration and solver run */
+
     TSP P{distance_matrix}; // initialize problem class
 
     TSPSolver S(        // initialize solver class
         P,              // with P as the target problem
         starting_tour,  // starting on x0
         1,              // using 20 values per each estimation of expected value at x
-        seed);          // and defined seed
+        acceptance_seed);          // and defined seed
+    
+    S.set_neighborhood_explorer_seed(exploration_seed);
 
-    auto result = S.run(1000); // run the solver for several iterations.
+    auto result = S.run(10000); // run the solver for several iterations.
     //auto result = S.run(1e6); // still < 1 sec on my machine
     //auto result = S.run(1e7); // takes ~2 secs on my machine
     std::cout << result;
+
+    /* End  */
+
+    tour answer = result.state;
+
+    std::cout << "\ndistance steps: \n" ;
+    for(size_t node = 0; node < answer.size();node++){
+        size_t next = node + 1 != answer.size() ? node + 1 : 0;
+        std::cout << '(' << answer[node] << " -> " << answer[next] << ") : " << distance_matrix[answer[node]][answer[next]] << "\n";
+    }
+    std::cout << "\n" << " total :  " << result.value << std::endl;
 
     return 0;
 }
