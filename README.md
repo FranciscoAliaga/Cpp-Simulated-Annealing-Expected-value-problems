@@ -17,7 +17,7 @@ TODO.
 
 For now, check the file `Rn_problem_template.cpp` it has explanations sufficent for you to figure it out.
 Essentially, you need to create a derived class for the problem and the solver, fill out details by providing functions specific to your application, and after that you can run it and retrieve your results.
-I also included a `Travelling Salesman Problem` solver example.
+I also included a `Traveling Salesman Problem` solver example.
 
 ## Theory
 
